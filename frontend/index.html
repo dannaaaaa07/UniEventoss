@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniEventos - UMB</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* LOGIN */
+
+        #loginPage {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #111827, #2563eb);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,.2);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo h1 {
+            color: #2563eb;
+            font-size: 32px;
+        }
+
+        .login-logo p {
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+        }
+
+        .login-button:hover {
+            background: #1d4ed8;
+        }
+
+        #loginError {
+            color: #dc2626;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        /* APP */
+
+        #app {
+            display: none;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #111827, #2563eb);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-title h1 {
+            font-size: 25px;
+        }
+
+        .header-title p {
+            margin-top: 4px;
+            opacity: .85;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-badge {
+            background: rgba(255,255,255,.15);
+            padding: 10px 15px;
+            border-radius: 10px;
+        }
+
+        .logout {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 85px);
+        }
+
+        aside {
+            width: 230px;
+            background: #111827;
+            color: white;
+            padding: 20px 12px;
+        }
+
+        .menu-button {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 7px;
+            border: none;
+            background: transparent;
+            color: white;
+            text-align: left;
+            border-radius: 8px;
+        }
+
+        .menu-button:hover,
+        .menu-button.active {
+            background: #2563eb;
+        }
+
+        main {
+            flex: 1;
+            padding: 30px;
+            min-width: 0;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            margin-bottom: 20px;
+        }
+
+        .section-title h2 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .section-title p {
+            color: #666;
+        }
+
+        /* CARDS */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.06);
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 28px;
+            color: #2563eb;
+            margin-top: 8px;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filters input,
+        .filters select {
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .event-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.07);
+        }
+
+        .event-card h3 {
+            margin-bottom: 10px;
+            color: #111827;
+        }
+
+        .event-info {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .capacity {
+            font-weight: bold;
+            margin: 15px 0;
+            color: #2563eb;
+        }
+
+        .capacity.full {
+            color: #dc2626;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .status.cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 3px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .btn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        /* FORMS */
+
+        .form-card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            max-width: 800px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        /* TABLE */
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f3f4f6;
+        }
+
+        .message {
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .message.success {
+            display: block;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .message.error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 900px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            aside {
+                width: 190px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .layout {
+                flex-direction: column;
+            }
+
+            aside {
+                width: 100%;
+                display: flex;
+                overflow-x: auto;
+            }
+
+            .menu-button {
+                min-width: 130px;
+            }
+
+            main {
+                padding: 18px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN ================= -->
+
+<div id="loginPage">
+
+    <div class="login-card">
+
+        <div class="login-logo">
+            <h1>UniEventos</h1>
+            <p>Universidad Manuela Beltrán</p>
+        </div>
+
+        <form id="loginForm">
+
+            <div class="form-group">
+                <label for="correo">Correo electrónico</label>
+                <input
+                    type="email"
+                    id="correo"
+                    placeholder="correo@unievientos.com"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Ingrese su contraseña"
+                    required
+                >
+            </div>
+
+            <button class="login-button" type="submit">
+                Ingresar
+            </button>
+
+            <div id="loginError"></div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= APLICACIÓN ================= -->
+
+<div id="app">
+
+    <header>
+
+        <div class="header-title">
+            <h1>UniEventos</h1>
+            <p>Gestión de eventos universitarios - UMB</p>
+        </div>
+
+        <div class="user-info">
+
+            <div class="user-badge">
+                <strong id="nombreUsuario"></strong>
+                <br>
+                <small id="rolUsuario"></small>
+            </div>
+
+            <button class="logout" onclick="cerrarSesion()">
+                Cerrar sesión
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <div class="layout">
+
+        <aside>
+
+            <button class="menu-button active" onclick="mostrarSeccion('inicio', this)">
+                🏠 Inicio
+            </button>
+
+            <button class="menu-button" onclick="mostrarSeccion('eventos', this)">
+                📅 Eventos
+            </button>
+
+            <button
+                id="menuCrear"
+                class="menu-button"
+                onclick="mostrarSeccion('crear', this)"
+            >
+                ➕ Crear evento
+            </button>
+
+            <button
+                id="menuInscripciones"
+                class="menu-button"
+                onclick="mostrarSeccion('inscripciones', this)"
+            >
+                🎟️ Inscripciones
+            </button>
+
+            <button
+                id="menuAsistencia"
+                class="menu-button"
+                onclick="mostrarSeccion('asistencia', this)"
+            >
+                ✅ Asistencia
+            </button>
+
+            <button
+                id="menuReportes"
+                class="menu-button"
+                onclick="mostrarSeccion('reportes', this)"
+            >
+                📊 Reportes
+            </button>
+
+            <button
+                id="menuAuditoria"
+                class="menu-button"
+                onclick="mostrarSeccion('auditoria', this)"
+            >
+                📝 Auditoría
+            </button>
+
+        </aside>
+
+
+        <main>
+
+            <!-- INICIO -->
+
+            <section id="inicio" class="section active">
+
+                <div class="section-title">
+                    <h2>Bienvenido a UniEventos</h2>
+                    <p>Centraliza los eventos y actividades de la universidad.</p>
+                </div>
+
+                <div class="stats">
+
+                    <div class="stat-card">
+                        Eventos
+                        <strong id="totalEventos">0</strong>
+                    </div>
+
+                    <div class="stat-card">
+                        Publicados
+                        <strong id="eventosPublicados">0</strong>
+                    </div>
+
+                    <div class="stat-card">
+                        Inscripciones
+                        <strong id="totalInscripciones">0</strong>
+                    </div>
+
+                    <div class="stat-card">
+                        Asistencias
+                        <strong id="totalAsistencias">0</strong>
+                    </div>
+
+                </div>
+
+                <button class="btn btn-primary" onclick="mostrarSeccion('eventos')">
+                    Ver eventos
+                </button>
+
+            </section>
+
+
+            <!-- EVENTOS -->
+
+            <section id="eventos" class="section">
+
+                <div class="section-title">
+                    <h2>Eventos</h2>
+                    <p>Consulta los eventos disponibles.</p>
+                </div>
+
+                <div id="eventoMessage" class="message"></div>
+
+                <div class="filters">
+
+                    <input
+                        type="date"
+                        id="filtroFecha"
+                        onchange="cargarEventos()"
+                    >
+
+                    <select
+                        id="filtroCategoria"
+                        onchange="cargarEventos()"
+                    >
+                        <option value="">Todas las categorías</option>
+                    </select>
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="limpiarFiltros()"
+                    >
+                        Limpiar filtros
+                    </button>
+
+                </div>
+
+                <div id="eventosContainer" class="event-grid"></div>
+
+            </section>
+
+
+            <!-- CREAR EVENTO -->
+
+            <section id="crear" class="section">
+
+                <div class="section-title">
+                    <h2>Crear evento</h2>
+                    <p>Registra una nueva actividad universitaria.</p>
+                </div>
+
+                <div id="crearMessage" class="message"></div>
+
+                <div class="form-card">
+
+                    <form id="eventoForm">
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+                                <label>Título</label>
+                                <input id="titulo" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Categoría</label>
+                                <select id="categoria_id" required></select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label>Descripción</label>
+                                <textarea id="descripcion"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Fecha</label>
+                                <input type="date" id="fecha" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Hora</label>
+                                <input type="time" id="hora" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Lugar</label>
+                                <input id="lugar" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Cupo máximo</label>
+                                <input
+                                    type="number"
+                                    id="cupo_maximo"
+                                    min="1"
+                                    required
+                                >
+                            </div>
+
+                        </div>
+
+                        <button class="btn btn-primary" type="submit">
+                            Crear evento
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+
+            <!-- INSCRIPCIONES -->
+
+            <section id="inscripciones" class="section">
+
+                <div class="section-title">
+                    <h2>Mis inscripciones</h2>
+                    <p>Consulta y administra tus inscripciones.</p>
+                </div>
+
+                <div id="inscripcionesMessage" class="message"></div>
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Evento</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="inscripcionesBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- ASISTENCIA -->
+
+            <section id="asistencia" class="section">
+
+                <div class="section-title">
+                    <h2>Control de asistencia</h2>
+                    <p>Registra y consulta la asistencia de los participantes.</p>
+                </div>
+
+                <div id="asistenciaMessage" class="message"></div>
+
+                <div class="form-card">
+
+                    <form id="asistenciaForm">
+
+                        <div class="form-group">
+                            <label>ID de inscripción</label>
+
+                            <input
+                                type="number"
+                                id="inscripcionAsistencia"
+                                required
+                            >
+                        </div>
+
+                        <button class="btn btn-success" type="submit">
+                            Registrar asistencia
+                        </button>
+
+                    </form>
+
+                </div>
+
+                <br>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="cargarAsistencias()"
+                >
+                    Consultar asistencias
+                </button>
+
+                <div class="table-container" style="margin-top:20px">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Inscripción</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="asistenciasBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- REPORTES -->
+
+            <section id="reportes" class="section">
+
+                <div class="section-title">
+                    <h2>Reportes</h2>
+                    <p>Información general de participación.</p>
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="cargarReporteInscritos()"
+                >
+                    Reporte de inscritos
+                </button>
+
+                <button
+                    class="btn btn-success"
+                    onclick="cargarReporteAsistencia()"
+                >
+                    Reporte de asistencia
+                </button>
+
+                <div class="table-container" style="margin-top:20px">
+
+                    <table>
+
+                        <thead id="reporteHead"></thead>
+
+                        <tbody id="reporteBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- AUDITORÍA -->
+
+            <section id="auditoria" class="section">
+
+                <div class="section-title">
+                    <h2>Auditoría</h2>
+                    <p>Registro de acciones realizadas en el sistema.</p>
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="cargarAuditoria()"
+                >
+                    Actualizar auditoría
+                </button>
+
+                <div class="table-container" style="margin-top:20px">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Usuario</th>
+                                <th>Acción</th>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="auditoriaBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const API = "http://localhost:3000";
+
+    let token = sessionStorage.getItem("unievientos_token");
+    let usuario = JSON.parse(
+        sessionStorage.getItem("unievientos_usuario") || "null"
+    );
+
+
+    /* ================= UTILIDADES ================= */
+
+    async function api(url, opciones = {}) {
+
+        const configuracion = {
+            ...opciones,
+            headers: {
+                "Content-Type": "application/json",
+                ...(opciones.headers || {})
+            }
+        };
+
+        if (token) {
+            configuracion.headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        const respuesta = await fetch(API + url, configuracion);
+
+        const texto = await respuesta.text();
+
+        let datos;
+
+        try {
+            datos = texto ? JSON.parse(texto) : {};
+        } catch {
+            datos = { mensaje: texto };
+        }
+
+        if (!respuesta.ok) {
+            throw new Error(
+                datos.error ||
+                datos.mensaje ||
+                "Ocurrió un error."
+            );
+        }
+
+        return datos;
+    }
+
+
+    function mostrarMensaje(id, texto, tipo = "success") {
+
+        const elemento = document.getElementById(id);
+
+        elemento.textContent = texto;
+        elemento.className = `message ${tipo}`;
+
+        setTimeout(() => {
+            elemento.className = "message";
+        }, 4000);
+    }
+
+
+    /* ================= LOGIN ================= */
+
+    document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function(e) {
+
+            e.preventDefault();
+
+            const correo =
+                document.getElementById("correo").value.trim();
+
+            const password =
+                document.getElementById("password").value;
+
+            const error =
+                document.getElementById("loginError");
+
+            error.textContent = "Ingresando...";
+
+            try {
+
+                const respuesta = await api(
+                    "/api/login",
+                    {
+                        method: "POST",
+                        body: JSON.stringify({
+                            correo,
+                            password
+                        })
+                    }
+                );
+
+                token = respuesta.token;
+                usuario = respuesta.usuario;
+
+                sessionStorage.setItem(
+                    "unievientos_token",
+                    token
+                );
+
+                sessionStorage.setItem(
+                    "unievientos_usuario",
+                    JSON.stringify(usuario)
+                );
+
+                error.textContent = "";
+
+                iniciarAplicacion();
+
+            } catch (err) {
+
+                error.textContent = err.message;
+
+            }
+
+        });
+
+
+    function iniciarAplicacion() {
+
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("app").style.display = "block";
+
+        document.getElementById("nombreUsuario").textContent =
+            usuario.nombre;
+
+        document.getElementById("rolUsuario").textContent =
+            usuario.rol;
+
+        configurarPermisos();
+
+        cargarCategorias();
+        cargarEventos();
+        cargarInscripciones();
+        cargarEstadisticas();
+
+    }
+
+
+    function configurarPermisos() {
+
+        const rol = usuario.rol;
+
+        const menuCrear =
+            document.getElementById("menuCrear");
+
+        const menuInscripciones =
+            document.getElementById("menuInscripciones");
+
+        const menuAsistencia =
+            document.getElementById("menuAsistencia");
+
+        const menuReportes =
+            document.getElementById("menuReportes");
+
+        const menuAuditoria =
+            document.getElementById("menuAuditoria");
+
+
+        /* Ocultar todo primero */
+
+        menuCrear.style.display = "none";
+        menuInscripciones.style.display = "none";
+        menuAsistencia.style.display = "none";
+        menuReportes.style.display = "none";
+        menuAuditoria.style.display = "none";
+
+
+        if (rol === "Participante") {
+
+            menuInscripciones.style.display = "block";
+
+        }
+
+
+        if (rol === "Organizador") {
+
+            menuCrear.style.display = "block";
+            menuAsistencia.style.display = "block";
+            menuReportes.style.display = "block";
+
+        }
+
+
+        if (rol === "Administrador") {
+
+            menuCrear.style.display = "block";
+            menuAsistencia.style.display = "block";
+            menuReportes.style.display = "block";
+            menuAuditoria.style.display = "block";
+
+        }
+
+    }
+
+
+    function cerrarSesion() {
+
+        if (token) {
+
+            fetch(API + "/api/logout", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }).catch(() => {});
+
+        }
+
+        sessionStorage.removeItem("unievientos_token");
+        sessionStorage.removeItem("unievientos_usuario");
+
+        token = null;
+        usuario = null;
+
+        document.getElementById("app").style.display = "none";
+        document.getElementById("loginPage").style.display = "flex";
+
+        document.getElementById("loginForm").reset();
+
+    }
+
+
+    /* ================= MENÚ ================= */
+
+    function mostrarSeccion(nombre, boton = null) {
+
+        document
+            .querySelectorAll(".section")
+            .forEach(section => {
+                section.classList.remove("active");
+            });
+
+        document
+            .getElementById(nombre)
+            .classList.add("active");
+
+
+        document
+            .querySelectorAll(".menu-button")
+            .forEach(btn => {
+                btn.classList.remove("active");
+            });
+
+        if (boton) {
+            boton.classList.add("active");
+        }
+
+
+        if (nombre === "eventos") {
+            cargarEventos();
+        }
+
+        if (nombre === "inscripciones") {
+            cargarInscripciones();
+        }
+
+        if (nombre === "asistencia") {
+            cargarAsistencias();
+        }
+
+    }
+
+
+    /* ================= CATEGORÍAS ================= */
+
+    async function cargarCategorias() {
+
+        try {
+
+            const categorias =
+                await api("/api/categorias");
+
+            const filtro =
+                document.getElementById("filtroCategoria");
+
+            const select =
+                document.getElementById("categoria_id");
+
+
+            filtro.innerHTML =
+                '<option value="">Todas las categorías</option>';
+
+            select.innerHTML =
+                '<option value="">Seleccione una categoría</option>';
+
+
+            categorias.forEach(categoria => {
+
+                filtro.innerHTML += `
+                    <option value="${categoria.id}">
+                        ${categoria.nombre}
+                    </option>
+                `;
+
+                select.innerHTML += `
+                    <option value="${categoria.id}">
+                        ${categoria.nombre}
+                    </option>
+                `;
+
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    /* ================= EVENTOS ================= */
+
+    async function cargarEventos() {
+
+        try {
+
+            let url = "/api/eventos";
+
+            const parametros = [];
+
+            const fecha =
+                document.getElementById("filtroFecha").value;
+
+            const categoria =
+                document.getElementById("filtroCategoria").value;
+
+
+            if (fecha) {
+                parametros.push(`fecha=${fecha}`);
+            }
+
+            if (categoria) {
+                parametros.push(`categoria_id=${categoria}`);
+            }
+
+            if (parametros.length) {
+                url += "?" + parametros.join("&");
+            }
+
+
+            const eventos = await api(url);
+
+            const container =
+                document.getElementById("eventosContainer");
+
+            container.innerHTML = "";
+
+
+            eventos.forEach(evento => {
+
+                const sinCupos =
+                    evento.cupos_disponibles <= 0;
+
+                const cancelado =
+                    evento.estado === "Cancelado";
+
+
+                let botones = "";
+
+
+                if (
+                    usuario.rol === "Participante" &&
+                    evento.estado === "Publicado"
+                ) {
+
+                    botones = `
+                        <button
+                            class="btn btn-primary"
+                            onclick="inscribirse(${evento.id})"
+                            ${sinCupos ? "disabled" : ""}
+                        >
+                            ${sinCupos ? "Sin cupos" : "Inscribirme"}
+                        </button>
+                    `;
+
+                }
+
+
+                if (
+                    usuario.rol === "Organizador" ||
+                    usuario.rol === "Administrador"
+                ) {
+
+                    if (!cancelado) {
+
+                        botones += `
+                            <button
+                                class="btn btn-success"
+                                onclick="publicarEvento(${evento.id})"
+                            >
+                                Publicar
+                            </button>
+
+                            <button
+                                class="btn btn-danger"
+                                onclick="cancelarEvento(${evento.id})"
+                            >
+                                Cancelar
+                            </button>
+                        `;
+
+                    }
+
+                }
+
+
+                container.innerHTML += `
+
+                    <article class="event-card">
+
+                        <span class="status ${
+                            cancelado ? "cancelled" : ""
+                        }">
+                            ${evento.estado}
+                        </span>
+
+                        <h3>${evento.titulo}</h3>
+
+                        <p class="event-info">
+                            ${evento.descripcion || ""}
+                        </p>
+
+                        <p class="event-info">
+                            📅 ${evento.fecha}
+                        </p>
+
+                        <p class="event-info">
+                            🕐 ${evento.hora}
+                        </p>
+
+                        <p class="event-info">
+                            📍 ${evento.lugar}
+                        </p>
+
+                        <p class="event-info">
+                            🏷️ ${evento.categoria_nombre || "Sin categoría"}
+                        </p>
+
+                        <p class="capacity ${
+                            sinCupos ? "full" : ""
+                        }">
+
+                            ${
+                                sinCupos
+                                ? "❌ No hay cupos disponibles"
+                                : "🎟️ " +
+                                  evento.cupos_disponibles +
+                                  " cupos disponibles de " +
+                                  evento.cupo_maximo
+                            }
+
+                        </p>
+
+                        ${botones}
+
+                    </article>
+
+                `;
+
+            });
+
+
+            document.getElementById("totalEventos").textContent =
+                eventos.length;
+
+            document.getElementById("eventosPublicados").textContent =
+                eventos.filter(e => e.estado === "Publicado").length;
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            mostrarMensaje(
+                "eventoMessage",
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+    function limpiarFiltros() {
+
+        document.getElementById("filtroFecha").value = "";
+        document.getElementById("filtroCategoria").value = "";
+
+        cargarEventos();
+
+    }
+
+
+    /* ================= CREAR EVENTO ================= */
+
+    document
+        .getElementById("eventoForm")
+        .addEventListener("submit", async function(e) {
+
+            e.preventDefault();
+
+
+            try {
+
+                const evento = {
+
+                    titulo:
+                        document.getElementById("titulo").value,
+
+                    descripcion:
+                        document.getElementById("descripcion").value,
+
+                    fecha:
+                        document.getElementById("fecha").value,
+
+                    hora:
+                        document.getElementById("hora").value,
+
+                    lugar:
+                        document.getElementById("lugar").value,
+
+                    cupo_maximo:
+                        Number(
+                            document.getElementById("cupo_maximo").value
+                        ),
+
+                    categoria_id:
+                        Number(
+                            document.getElementById("categoria_id").value
+                        ),
+
+                    organizador_id:
+                        usuario.id
+
+                };
+
+
+                await api(
+                    "/api/eventos",
+                    {
+                        method: "POST",
+                        body: JSON.stringify(evento)
+                    }
+                );
+
+
+                mostrarMensaje(
+                    "crearMessage",
+                    "Evento creado correctamente.",
+                    "success"
+                );
+
+
+                document
+                    .getElementById("eventoForm")
+                    .reset();
+
+
+                cargarEventos();
+                cargarEstadisticas();
+
+
+            } catch (error) {
+
+                mostrarMensaje(
+                    "crearMessage",
+                    error.message,
+                    "error"
+                );
+
+            }
+
+        });
+
+
+    /* ================= INSCRIPCIONES ================= */
+
+    async function inscribirse(eventoId) {
+
+        if (usuario.rol !== "Participante") {
+            return;
+        }
+
+
+        try {
+
+            const respuesta = await api(
+                "/api/inscripciones",
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        usuario_id: usuario.id,
+                        evento_id: eventoId
+                    })
+                }
+            );
+
+
+            mostrarMensaje(
+                "eventoMessage",
+                "¡Inscripción realizada correctamente! El cupo fue actualizado.",
+                "success"
+            );
+
+
+            await cargarEventos();
+            await cargarInscripciones();
+            await cargarEstadisticas();
+
+
+        } catch (error) {
+
+            mostrarMensaje(
+                "eventoMessage",
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+    async function cargarInscripciones() {
+
+        if (!usuario) return;
+
+
+        try {
+
+            const inscripciones =
+                await api(
+                    `/api/inscripciones?usuario_id=${usuario.id}`
+                );
+
+
+            const body =
+                document.getElementById("inscripcionesBody");
+
+            body.innerHTML = "";
+
+
+            inscripciones.forEach(inscripcion => {
+
+                body.innerHTML += `
+
+                    <tr>
+
+                        <td>${inscripcion.id}</td>
+
+                        <td>
+                            ${
+                                inscripcion.evento_titulo ||
+                                inscripcion.titulo ||
+                                "Evento"
+                            }
+                        </td>
+
+                        <td>
+                            ${inscripcion.fecha_inscripcion}
+                        </td>
+
+                        <td>
+                            ${inscripcion.estado}
+                        </td>
+
+                        <td>
+
+                            ${
+                                inscripcion.estado === "Activa"
+                                ? `
+                                    <button
+                                        class="btn btn-danger"
+                                        onclick="cancelarInscripcion(${inscripcion.id})"
+                                    >
+                                        Cancelar
+                                    </button>
+                                  `
+                                : "-"
+                            }
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+
+            document.getElementById("totalInscripciones").textContent =
+                inscripciones.filter(
+                    i => i.estado === "Activa"
+                ).length;
+
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    async function cancelarInscripcion(id) {
+
+        if (
+            !confirm(
+                "¿Seguro que desea cancelar esta inscripción?"
+            )
+        ) {
+            return;
+        }
+
+
+        try {
+
+            await api(
+                `/api/inscripciones/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+            mostrarMensaje(
+                "inscripcionesMessage",
+                "Inscripción cancelada. El cupo volvió a estar disponible.",
+                "success"
+            );
+
+
+            await cargarInscripciones();
+            await cargarEventos();
+            await cargarEstadisticas();
+
+
+        } catch (error) {
+
+            mostrarMensaje(
+                "inscripcionesMessage",
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /* ================= ADMINISTRACIÓN EVENTOS ================= */
+
+    async function publicarEvento(id) {
+
+        try {
+
+            await api(
+                `/api/eventos/${id}/publicar`,
+                {
+                    method: "POST"
+                }
+            );
+
+            mostrarMensaje(
+                "eventoMessage",
+                "Evento publicado correctamente.",
+                "success"
+            );
+
+            cargarEventos();
+
+        } catch (error) {
+
+            mostrarMensaje(
+                "eventoMessage",
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+    async function cancelarEvento(id) {
+
+        if (!confirm("¿Seguro que desea cancelar este evento?")) {
+            return;
+        }
+
+
+        try {
+
+            await api(
+                `/api/eventos/${id}/cancelar`,
+                {
+                    method: "POST"
+                }
+            );
+
+            mostrarMensaje(
+                "eventoMessage",
+                "Evento cancelado correctamente.",
+                "success"
+            );
+
+            cargarEventos();
+
+        } catch (error) {
+
+            mostrarMensaje(
+                "eventoMessage",
+                error.message,
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /* ================= ASISTENCIA ================= */
+
+    document
+        .getElementById("asistenciaForm")
+        .addEventListener("submit", async function(e) {
+
+            e.preventDefault();
+
+
+            const inscripcionId =
+                Number(
+                    document.getElementById(
+                        "inscripcionAsistencia"
+                    ).value
+                );
+
+
+            try {
+
+                await api(
+                    "/api/asistencias",
+                    {
+                        method: "POST",
+                        body: JSON.stringify({
+                            inscripcion_id: inscripcionId
+                        })
+                    }
+                );
+
+
+                mostrarMensaje(
+                    "asistenciaMessage",
+                    "Asistencia registrada correctamente.",
+                    "success"
+                );
+
+
+                document
+                    .getElementById("asistenciaForm")
+                    .reset();
+
+
+                cargarAsistencias();
+                cargarEstadisticas();
+
+
+            } catch (error) {
+
+                mostrarMensaje(
+                    "asistenciaMessage",
+                    error.message,
+                    "error"
+                );
+
+            }
+
+        });
+
+
+    async function cargarAsistencias() {
+
+        try {
+
+            const asistencias =
+                await api("/api/asistencias");
+
+            const body =
+                document.getElementById("asistenciasBody");
+
+            body.innerHTML = "";
+
+
+            asistencias.forEach(a => {
+
+                body.innerHTML += `
+
+                    <tr>
+
+                        <td>${a.id}</td>
+                        <td>${a.inscripcion_id}</td>
+                        <td>${a.fecha_registro}</td>
+                        <td>${a.estado}</td>
+
+                    </tr>
+
+                `;
+
+            });
+
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    /* ================= REPORTES ================= */
+
+    async function cargarReporteInscritos() {
+
+        try {
+
+            const datos =
+                await api("/api/reportes/inscritos");
+
+
+            const head =
+                document.getElementById("reporteHead");
+
+            const body =
+                document.getElementById("reporteBody");
+
+
+            head.innerHTML = `
+                <tr>
+                    ${Object.keys(datos[0] || {})
+                        .map(campo => `<th>${campo}</th>`)
+                        .join("")}
+                </tr>
+            `;
+
+
+            body.innerHTML = datos.map(fila => `
+
+                <tr>
+
+                    ${
+                        Object.values(fila)
+                            .map(valor => `<td>${valor ?? ""}</td>`)
+                            .join("")
+                    }
+
+                </tr>
+
+            `).join("");
+
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    async function cargarReporteAsistencia() {
+
+        try {
+
+            const datos =
+                await api("/api/reportes/asistencia");
+
+
+            const head =
+                document.getElementById("reporteHead");
+
+            const body =
+                document.getElementById("reporteBody");
+
+
+            head.innerHTML = `
+                <tr>
+                    ${Object.keys(datos[0] || {})
+                        .map(campo => `<th>${campo}</th>`)
+                        .join("")}
+                </tr>
+            `;
+
+
+            body.innerHTML = datos.map(fila => `
+
+                <tr>
+
+                    ${
+                        Object.values(fila)
+                            .map(valor => `<td>${valor ?? ""}</td>`)
+                            .join("")
+                    }
+
+                </tr>
+
+            `).join("");
+
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    /* ================= AUDITORÍA ================= */
+
+    async function cargarAuditoria() {
+
+        try {
+
+            const datos =
+                await api("/api/auditoria");
+
+
+            const body =
+                document.getElementById("auditoriaBody");
+
+            body.innerHTML = "";
+
+
+            datos.forEach(a => {
+
+                body.innerHTML += `
+
+                    <tr>
+
+                        <td>${a.id}</td>
+
+                        <td>
+                            ${a.usuario_nombre || a.usuario_id || ""}
+                        </td>
+
+                        <td>${a.accion}</td>
+
+                        <td>${a.fecha}</td>
+
+                        <td>${a.descripcion || ""}</td>
+
+                    </tr>
+
+                `;
+
+            });
+
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    /* ================= ESTADÍSTICAS ================= */
+
+    async function cargarEstadisticas() {
+
+        try {
+
+            const eventos =
+                await api("/api/eventos");
+
+            document.getElementById("totalEventos").textContent =
+                eventos.length;
+
+            document.getElementById("eventosPublicados").textContent =
+                eventos.filter(
+                    e => e.estado === "Publicado"
+                ).length;
+
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+
+        try {
+
+            const asistencias =
+                await api("/api/asistencias");
+
+            document.getElementById("totalAsistencias").textContent =
+                asistencias.length;
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+
+        try {
+
+            if (usuario && usuario.rol === "Participante") {
+
+                const inscripciones =
+                    await api(
+                        `/api/inscripciones?usuario_id=${usuario.id}`
+                    );
+
+                document.getElementById(
+                    "totalInscripciones"
+                ).textContent =
+                    inscripciones.filter(
+                        i => i.estado === "Activa"
+                    ).length;
+
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+
+
+    /* ================= INICIAR ================= */
+
+    if (token && usuario) {
+
+        iniciarAplicacion();
+
+    }
+
+</script>
+
+</body>
+</html>
